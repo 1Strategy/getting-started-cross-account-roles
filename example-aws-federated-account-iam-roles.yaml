@@ -7,11 +7,16 @@ Parameters:
     Description: AWS Account Id of the identity/federation account.
     MaxLength: 12
     MinLength: 12
+  OperatingRegion:
+    Type: String
+    Description: This limits the region into which developers can deploy EC2 instances
+    Default: "us-west-2"
+    AllowedValues: ["us-east-1 "us-east-2 "us-west-1 "us-west-2"]
   Environment:
     Type: String
     Description: Is the current AWS Account a Dev, Test, or Prod Environment
     Default: "dev"
-    AllowedValues: ["test","dev","prod"]
+    AllowedValues: ["test "dev "prod"]
 
 Conditions:
   NotProductionEnvironment: !Not [!Equals [!Ref Environment, "prod"]]
@@ -83,6 +88,7 @@ Resources:
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/ReadOnlyAccess
+        - arn:aws:iam::aws:policy/AWSServiceCatalogEndUserFullAccess
    
   DeveloperEC2Policy:
     Type: AWS::IAM::ManagedPolicy
@@ -109,7 +115,7 @@ Resources:
               - t2.medium
               - t2.large   
             ForAnyValue:StringEqualsIfExists:
-              ec2:Region: us-west-2            
+              ec2:Region: !Ref OperatingRegion
         - Sid: AllowsDevelopersToOnlyManageInstancesCreatedByThem
           Effect: Allow
           Action:
@@ -117,7 +123,52 @@ Resources:
           - ec2:TerminateInstances
           - ec2:StartInstances
           - ec2:StopInstances
-          Resource: "*"
+          Resource: '*'
           Condition:
             StringEquals:
               ec2:ResourceTag/PrincipalId: "${aws:userid}"
+        - Sid:
+          Effect: Allow
+          Action:
+          - ec2:CreateVolume
+          - ec2:CreateSecurityGroup
+          - ec2:AuthorizeSecurityGroupEgress
+          - ec2:AuthorizeSecurityGroupIngress
+          - ec2:RevokeSecurityGroupEgress 
+          - ec2:RevokeSecurityGroupIngress
+          Resource: 
+        - Sid: CreateTagsOnNewInstances
+          Effect: Allow
+          Action: 
+          - ec2:CreateTags
+          Resource: '*'
+          Condition:
+            StringEquals:
+              "ec2:CreateAction": RunInstances
+        - Sid: AllowsDevelopersToCreateServiceLinkedRole
+          Effect: Allow
+          Action: 
+          - iam:CreateServiceLinkedRole
+          Resouce: '*'
+        - Sid: GrantAccessToOtherCommonAWSServices
+          Effect: Allow
+          Action: 
+          - lambda:*
+          - dynamodb:*
+          - ecs:*
+          - s3:Get*
+          - s3:Put*
+          - s3:List*
+          - s3:CreateBucket
+          - autoscaling:*
+          - cloudwatch:*
+          - rds:*
+          - states:*
+          - apigateway:*
+          - elb:*
+          - sns:*
+          - sqs:*
+          - elasticbeanstalk:*
+          - logs:*
+          Resouce: '*'
+
