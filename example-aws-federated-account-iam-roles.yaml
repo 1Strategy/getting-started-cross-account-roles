@@ -134,9 +134,17 @@ Resources:
           - ec2:CreateSecurityGroup
           - ec2:AuthorizeSecurityGroupEgress
           - ec2:AuthorizeSecurityGroupIngress
-          - ec2:RevokeSecurityGroupEgress 
+          - ec2:RevokeSecurityGroupEgress
           - ec2:RevokeSecurityGroupIngress
-          Resource: 
+          - ec2:CopySnapshot
+          - ec2:ModifySnapshotAttribute
+          - ec2:CreateKeyPair
+          - ec2:CreateSecurityGroup
+          - ec2:CreateSnapshot
+          - ec2:ImportSnapshot
+          - ec2:CreateImage
+          - ec2:CreateVolume
+          Resource: '*'
         - Sid: CreateTagsOnNewInstances
           Effect: Allow
           Action: 
@@ -171,4 +179,7 @@ Resources:
           - elasticbeanstalk:*
           - logs:*
           Resouce: '*'
-
+        - Sid: GrantAccessToOtherCommonAWSServices
+          Effect: Allow
+          Action: iam:PassRole
+          Resource: '*'
