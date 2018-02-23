@@ -1,0 +1,128 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Configure cross account roles
+
+Parameters:
+  MasterAccountId:
+    Type: String
+    Description: AWS Account Id of the identity/federation account.
+    MaxLength: 12
+    MinLength: 12
+  Environment:
+    Type: CommaDelimitedList
+    Description: Is the current AWS Account a Dev, Test, or Prod Environment
+    Default: "dev"
+    AllowedValues: ["test","dev","prod"]
+
+
+Conditions:
+  NotProductionEnvironment: !Not [!Equals [Environment, "prod"]]
+
+Resources:
+  # NetworkAdminRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     RoleName: NetworkAdmin
+  #     AssumeRolePolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             AWS:
+  #               - !Ref MasterAccountId
+  #           Action:
+  #             - sts:AssumeRole
+  #     Path: /
+  #     ManagedPolicyArns:
+  #       - arn:aws:iam::aws:policy/job-function/NetworkAdministrator
+  
+  # AWSAdminRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     RoleName: AWSAdmin
+  #     AssumeRolePolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             AWS:
+  #               - !Ref MasterAccountId
+  #           Action:
+  #             - sts:AssumeRole
+  #     Path: /
+  #     ManagedPolicyArns:
+  #       - arn:aws:iam::aws:policy/AdministratorAccess
+  # ReadOnlyRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     RoleName: NetworkAdministrator
+  #     AssumeRolePolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             AWS:
+  #               - !Ref MasterAccountId
+  #           Action:
+  #             - sts:AssumeRole
+  #     Path: /
+  #     ManagedPolicyArns:
+  #       - arn:aws:iam::aws:policy/ReadOnlyAccess
+
+  DeveloperRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: DeveloperRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            AWS:
+            - !Ref MasterAccountId
+          Action:
+          - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+        - !If [NotProductionEnvironment, !Ref DeveloperEC2Policy, '']
+    
+    
+  DeveloperEC2Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: DeveloperEC2Policy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: CreateSmallInstances
+          Effect: Allow
+          Action: 
+          - ec2:StartInstances
+          - ec2:RunInstances
+          Resource: 'arn:aws:ec2:*:*:instance/*'
+          Condition:
+            StringEquals:
+              ec2:InstanceType:
+              - t2.nano
+              - t2.micro
+              - t2.small
+              - t2.medium
+              - t2.large             
+        - Sid: AllowsDevelopersToOnlyCreateEC2InstancesInAGivenRegion
+          Effect: Allow
+          Action: ec2:RunInstances
+          Resource: "*"
+          Condition:
+            ForAnyValue:StringEqualsIfExists:
+              ec2:Region: us-west-2
+        - Sid: AllowsDevelopersToOnlyManageInstancesCreatedByThem
+          Effect: Allow
+          Action:
+          - ec2:RebootInstances
+          - ec2:TerminateInstances
+          - ec2:StartInstances
+          - ec2:StopInstances
+          Resource: "*"
+          Condition:
+            StringEquals:
+              ec2:ResourceTag/PrincipalId: "${aws:userid}"
