@@ -8,20 +8,19 @@ Parameters:
     MaxLength: 12
     MinLength: 12
   Environment:
-    Type: CommaDelimitedList
+    Type: String
     Description: Is the current AWS Account a Dev, Test, or Prod Environment
     Default: "dev"
     AllowedValues: ["test","dev","prod"]
 
-
 Conditions:
-  NotProductionEnvironment: !Not [!Equals [Environment, "prod"]]
+  NotProductionEnvironment: !Not [!Equals [!Ref Environment, "prod"]]
 
 Resources:
   NetworkAdminRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: NetworkAdmin
+      RoleName: NetworkAdminRole
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -38,7 +37,7 @@ Resources:
   AWSAdminRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: AWSAdmin
+      RoleName: AWSAdminRole
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -54,7 +53,7 @@ Resources:
   ReadOnlyRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: NetworkAdministrator
+      RoleName: ReadOnlyRole
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -84,13 +83,14 @@ Resources:
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/ReadOnlyAccess
-        - !If [NotProductionEnvironment, !Ref DeveloperEC2Policy, '']
-    
-    
+   
   DeveloperEC2Policy:
     Type: AWS::IAM::ManagedPolicy
+    Condition: NotProductionEnvironment
     Properties:
       ManagedPolicyName: DeveloperEC2Policy
+      Roles:
+      - !Ref DeveloperRole
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -107,14 +107,9 @@ Resources:
               - t2.micro
               - t2.small
               - t2.medium
-              - t2.large             
-        - Sid: AllowsDevelopersToOnlyCreateEC2InstancesInAGivenRegion
-          Effect: Allow
-          Action: ec2:RunInstances
-          Resource: "*"
-          Condition:
+              - t2.large   
             ForAnyValue:StringEqualsIfExists:
-              ec2:Region: us-west-2
+              ec2:Region: us-west-2            
         - Sid: AllowsDevelopersToOnlyManageInstancesCreatedByThem
           Effect: Allow
           Action:
