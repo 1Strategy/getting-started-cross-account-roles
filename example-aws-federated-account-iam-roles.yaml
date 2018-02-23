@@ -18,55 +18,55 @@ Conditions:
   NotProductionEnvironment: !Not [!Equals [Environment, "prod"]]
 
 Resources:
-  # NetworkAdminRole:
-  #   Type: AWS::IAM::Role
-  #   Properties:
-  #     RoleName: NetworkAdmin
-  #     AssumeRolePolicyDocument:
-  #       Version: 2012-10-17
-  #       Statement:
-  #         - Effect: Allow
-  #           Principal:
-  #             AWS:
-  #               - !Ref MasterAccountId
-  #           Action:
-  #             - sts:AssumeRole
-  #     Path: /
-  #     ManagedPolicyArns:
-  #       - arn:aws:iam::aws:policy/job-function/NetworkAdministrator
+  NetworkAdminRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: NetworkAdmin
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Ref MasterAccountId
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/job-function/NetworkAdministrator
   
-  # AWSAdminRole:
-  #   Type: AWS::IAM::Role
-  #   Properties:
-  #     RoleName: AWSAdmin
-  #     AssumeRolePolicyDocument:
-  #       Version: 2012-10-17
-  #       Statement:
-  #         - Effect: Allow
-  #           Principal:
-  #             AWS:
-  #               - !Ref MasterAccountId
-  #           Action:
-  #             - sts:AssumeRole
-  #     Path: /
-  #     ManagedPolicyArns:
-  #       - arn:aws:iam::aws:policy/AdministratorAccess
-  # ReadOnlyRole:
-  #   Type: AWS::IAM::Role
-  #   Properties:
-  #     RoleName: NetworkAdministrator
-  #     AssumeRolePolicyDocument:
-  #       Version: 2012-10-17
-  #       Statement:
-  #         - Effect: Allow
-  #           Principal:
-  #             AWS:
-  #               - !Ref MasterAccountId
-  #           Action:
-  #             - sts:AssumeRole
-  #     Path: /
-  #     ManagedPolicyArns:
-  #       - arn:aws:iam::aws:policy/ReadOnlyAccess
+  AWSAdminRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AWSAdmin
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Ref MasterAccountId
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+  ReadOnlyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: NetworkAdministrator
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Ref MasterAccountId
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
 
   DeveloperRole:
     Type: AWS::IAM::Role
