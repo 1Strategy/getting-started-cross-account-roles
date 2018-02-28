@@ -1,7 +1,7 @@
 
 # getting-started-cross-account-roles
 
-These example CloudFormation templates are to help you get started with secure cross-account roles.
+These example CloudFormation templates are to help you get started with secure cross-account roles. The job-functions/groups below are not exhaustive and this template can be updated to include as many additional groups and roles as is appopriate for your use case (i.e. data scientists, databasea admins, cd/ci systems).
  
 ***example-aws-federation-account-iam-groups.yaml***
   
@@ -28,7 +28,7 @@ This template creates 4 cross-account IAM Roles: *ReadOnlyRole, DeveloperRole, N
   
   
 
-This template must be deploy into EACH account that needs to be accessed via these cross-account roles. Furthermore, any of the IAM Users in the above groups MUST have MFA enabled in order to assume any roles.
+This template must be deploy into EACH account that needs to be accessed via these cross-account roles, including the Identity Account (Roles can also be used within an account, not just cross-account. Yes I know it's confusing). Furthermore, any of the IAM Users in the above groups MUST have MFA enabled in order to assume any roles.
 
 For additional security, the assume role policies can be restricted to only assume roles in certain accounts. See below as an example:
 
