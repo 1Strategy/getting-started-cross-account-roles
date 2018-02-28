@@ -3,17 +3,17 @@
 
 These example CloudFormation templates are to help you get started with secure cross-account roles. The job-functions/groups below are not exhaustive and this template can be updated to include as many additional groups and roles as is appopriate for your use case (i.e. data scientists, databasea admins, cd/ci systems).
  
-***example-aws-federation-account-iam-groups.yaml***
+## ***example-aws-federation-account-iam-groups.yaml***
   
-This template creates 3 IAM User Groups: *DeveloperGroup, NetworkAdminGroup, and AWSAdminGroup*. Each group has policies that only allow for IAM self management (change password, enable MFA token, etc.) and role assumption into the corresponding IAM Roles in the second CloudFormation Template. No other IAM Permissions are granted at this level and any privilege escalation will be done via role-assumption. Users can escalate their privilege by using the following link: https://signin.aws.amazon.com/switchrole?roleName=<IAM ROLE NAME TO BE ASSUMED>&account=<AWS ACCOUNT # or ALIAS>
+This template creates 3 IAM User Groups: ***DeveloperGroup***, ***NetworkAdminGroup***, and ***AWSAdminGroup***. Each group has policies that only allow for IAM self management (change password, enable MFA token, etc.) and role assumption into the corresponding IAM Roles in the second CloudFormation Template. No other IAM Permissions are granted at this level and any privilege escalation will be done via role-assumption. Users can escalate their privilege by using the following link: https://signin.aws.amazon.com/switchrole?roleName=<IAM ROLE NAME TO BE ASSUMED>&account=<AWS ACCOUNT # or ALIAS>
 
   
 
 This template should be deployed into your identity or federation account (i.e. wherein your IAM Users are created).  
 
-***example-aws-federation-account-iam-roles.yaml***
+## ***example-aws-federation-account-iam-roles.yaml***
 
-This template creates 4 cross-account IAM Roles: *ReadOnlyRole, DeveloperRole, NetworkAdminRole, and AWSAdminRole*. Each IAM Role has policies that only allow for varying levels of IAM Permissions depending on job function. The roles titles are fairly self explanatory.
+This template creates 4 cross-account IAM Roles: ***ReadOnlyRole***, ***DeveloperRole***, ***NetworkAdminRole***, and ***AWSAdminRole***. Each IAM Role has policies that only allow for varying levels of IAM Permissions depending on job function. The roles titles are fairly self explanatory.
 
 * ***ReadOnlyRole***: Any user in the above groups can assume this IAM Role which will grant *Read Only* access into the current child or federated account.
 
