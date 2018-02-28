@@ -11,12 +11,12 @@ Parameters:
     Type: String
     Description: This limits the region into which developers can deploy EC2 instances
     Default: "us-west-2"
-    AllowedValues: ["us-east-1 "us-east-2 "us-west-1 "us-west-2"]
+    AllowedValues: ["us-east-1", "us-east-2", "us-west-1", "us-west-2"]
   Environment:
     Type: String
     Description: Is the current AWS Account a Dev, Test, or Prod Environment
     Default: "dev"
-    AllowedValues: ["test "dev "prod"]
+    AllowedValues: ["test", "dev", "prod"]
 
 Conditions:
   NotProductionEnvironment: !Not [!Equals [!Ref Environment, "prod"]]
@@ -55,6 +55,7 @@ Resources:
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
+
   ReadOnlyRole:
     Type: AWS::IAM::Role
     Properties:
@@ -127,7 +128,7 @@ Resources:
           Condition:
             StringEquals:
               ec2:ResourceTag/PrincipalId: "${aws:userid}"
-        - Sid:
+        - Sid: EC2Permissions
           Effect: Allow
           Action:
           - ec2:CreateVolume
@@ -143,7 +144,6 @@ Resources:
           - ec2:CreateSnapshot
           - ec2:ImportSnapshot
           - ec2:CreateImage
-          - ec2:CreateVolume
           Resource: '*'
         - Sid: CreateTagsOnNewInstances
           Effect: Allow
@@ -157,7 +157,7 @@ Resources:
           Effect: Allow
           Action: 
           - iam:CreateServiceLinkedRole
-          Resouce: '*'
+          Resource: '*'
         - Sid: GrantAccessToOtherCommonAWSServices
           Effect: Allow
           Action: 
@@ -178,8 +178,8 @@ Resources:
           - sqs:*
           - elasticbeanstalk:*
           - logs:*
-          Resouce: '*'
-        - Sid: GrantAccessToOtherCommonAWSServices
+          Resource: '*'
+        - Sid: GrantAccessToPassRoles
           Effect: Allow
           Action: iam:PassRole
           Resource: '*'
