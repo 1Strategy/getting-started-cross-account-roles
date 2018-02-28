@@ -21,7 +21,7 @@ This template creates 4 cross-account IAM Roles: ***ReadOnlyRole***, ***Develope
 
 * ***NetworkAdminRole***: Users assigned to the NetworkAdminGroup from above will have the ability to assume this IAM Role. This IAM Role grants access to VPC, Subnets, NACLs, Security Groups, and Route Tables into whichever account it's deployed.
 
-* ***DeveloperRole***: Users assigned to the DeveloperGroup from above will have the ability to assume this IAM Role. This IAM Role has two-tiers of access as determined by the *Environment* flag (condition) in the CloudFormation Parameters. In *Production* environments, the DeveloperRole will only have Read Only access. In **Development** or **Test** (sandbox) environments, the DeveloperRole has significantly more access. For example, RDS:\*, Lambda:\*, ELB:\*, etc etc. Please see the template for more details.
+* ***DeveloperRole***: Users assigned to the DeveloperGroup from above will have the ability to assume this IAM Role. This IAM Role has two-tiers of access as determined by the *Environment* flag (condition) in the CloudFormation Parameters. In ***Production*** environments, the ***DeveloperRole*** will only have Read Only access. In **Development** or **Test** (sandbox) environments, the DeveloperRole has significantly more access. For example, RDS:\*, Lambda:\*, ELB:\*, etc etc. Please see the template for more details.
 
 	Additionally, while the DeveloperRole will have access to deploy EC2 instances, they are limited to creating only smaller ec2 instances in a single given region (from a CloudFormation Parameter). This is to help limit costs and improve visibility.
 
