@@ -52,7 +52,7 @@ Statement:
 -	Effect: Allow
 	Action: ["sts:AssumeRole"]
 	Resource: [ 'arn:aws:iam::111111111111:role/DeveloperRole',
-				'arn:aws:iam::222222222222:role/DeveloperRole',
-				'arn:aws:iam::333333333333:role/DeveloperRole']
+		    'arn:aws:iam::222222222222:role/DeveloperRole',
+		    'arn:aws:iam::333333333333:role/DeveloperRole']
 ...
 ```
