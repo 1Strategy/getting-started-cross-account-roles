@@ -1,7 +1,9 @@
 
 # getting-started-cross-account-roles
 
-These example CloudFormation templates are to help you get started with secure cross-account roles. The job-functions/groups below are not exhaustive and this template can be updated to include as many additional groups and roles as is appopriate for your use case (i.e. data scientists, databasea admins, cd/ci systems).
+These example CloudFormation templates are to help you get started with secure cross-account roles. The job-functions/groups below are not exhaustive and this template can be updated to include as many additional groups and roles as is appropriate for your use case (i.e. data scientists, databasea admins, cd/ci systems).
+
+![Diagram](example-diagram.png)
  
 ## ***example-aws-federation-account-iam-groups.yaml***
   
