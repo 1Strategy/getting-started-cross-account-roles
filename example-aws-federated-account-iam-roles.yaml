@@ -9,13 +9,13 @@ Parameters:
     MinLength: 12
   OperatingRegion:
     Type: String
-    Description: This limits the region into which developers can deploy EC2 instances
+    Description: This limits the region into which developers can deploy ec2 instances
     Default: "us-west-2"
     AllowedValues: ["us-east-1", "us-east-2", "us-west-1", "us-west-2"]
   Environment:
     Type: String
     Description: Is the current AWS Account a Dev, Test, or Prod Environment
-    Default: "dev"
+    Default: "prod"
     AllowedValues: ["test", "dev", "prod"]
 
 Conditions:
@@ -35,6 +35,9 @@ Resources:
                 - !Ref MasterAccountId
             Action:
               - sts:AssumeRole
+            Condition:
+              Bool:
+                aws:MultiFactorAuthPresent: 'true'
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/job-function/NetworkAdministrator
@@ -52,6 +55,9 @@ Resources:
                 - !Ref MasterAccountId
             Action:
               - sts:AssumeRole
+            Condition:
+              Bool:
+                aws:MultiFactorAuthPresent: 'true'
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
@@ -69,6 +75,10 @@ Resources:
                 - !Ref MasterAccountId
             Action:
               - sts:AssumeRole
+            Condition:
+              Bool:
+                aws:MultiFactorAuthPresent: 'true'
+
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/ReadOnlyAccess
@@ -86,11 +96,15 @@ Resources:
             - !Ref MasterAccountId
           Action:
           - sts:AssumeRole
+          Condition:
+            Bool:
+              aws:MultiFactorAuthPresent: 'true'
+
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/ReadOnlyAccess
         - arn:aws:iam::aws:policy/AWSServiceCatalogEndUserFullAccess
-   
+
   DeveloperEC2Policy:
     Type: AWS::IAM::ManagedPolicy
     Condition: NotProductionEnvironment
