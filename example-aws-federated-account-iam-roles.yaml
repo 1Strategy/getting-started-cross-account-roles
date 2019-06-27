@@ -9,26 +9,6 @@ Parameters:
     MinLength: 12
 
 Resources:
-  NetworkAdminRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: NetworkAdminRole
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              AWS:
-                - !Ref MasterAccountId
-            Action:
-              - sts:AssumeRole
-            Condition:
-              Bool:
-                aws:MultiFactorAuthPresent: 'true'
-      Path: /
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/job-function/NetworkAdministrator
-  
   AWSAdminRole:
     Type: AWS::IAM::Role
     Properties:
@@ -49,10 +29,10 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
 
-  ReadOnlyRole:
+  NetworkAdminRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: ReadOnlyRole
+      RoleName: NetworkAdminRole
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -67,7 +47,7 @@ Resources:
                 aws:MultiFactorAuthPresent: 'true'
       Path: /
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/ReadOnlyAccess
+        - arn:aws:iam::aws:policy/job-function/NetworkAdministrator
 
   DeveloperRole:
     Type: AWS::IAM::Role
@@ -88,3 +68,23 @@ Resources:
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/PowerUserAccess
+
+  ReadOnlyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ReadOnlyRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Ref MasterAccountId
+            Action:
+              - sts:AssumeRole
+            Condition:
+              Bool:
+                aws:MultiFactorAuthPresent: 'true'
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/ReadOnlyAccess

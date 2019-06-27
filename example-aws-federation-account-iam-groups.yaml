@@ -3,17 +3,15 @@ Description:
   This is a sample template to help folks get started on AWS Cross Account Roles. By default all of the users in these groups only 
   have IAM permissions to self manage IAM (password, Enable MFA, etc) and assume others (privilege escalation). MFA must be enable
   to escalate privileges.
-  
+
 Resources:
-  
-  DeveloperGroup:
+  AWSAdminGroup:
     Type: AWS::IAM::Group
     Properties:
-      GroupName: DeveloperGroup
+      GroupName: AWSAdminGroup
       ManagedPolicyArns: [!Ref IAMSelfManagePolicy,
                           !Ref AssumeReadOnlyRolePolicy,
-                          !Ref AssumeDeveloperRolePolicy]
-    
+                          !Ref AssumeAWSAdminRolePolicy]
 
   NetworkAdminGroup:
     Type: AWS::IAM::Group
@@ -23,14 +21,14 @@ Resources:
                           !Ref AssumeReadOnlyRolePolicy,
                           !Ref AssumeNetworkAdminRolePolicy]
 
-  AWSAdminGroup:
+  DeveloperGroup:
     Type: AWS::IAM::Group
     Properties:
-      GroupName: AWSAdminGroup
+      GroupName: DeveloperGroup
       ManagedPolicyArns: [!Ref IAMSelfManagePolicy,
                           !Ref AssumeReadOnlyRolePolicy,
-                          !Ref AssumeAWSAdminRolePolicy]
-   
+                          !Ref AssumeDeveloperRolePolicy]
+
   IAMSelfManagePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -70,6 +68,38 @@ Resources:
                 !Join [ "", [ 'arn:aws:iam:', !Sub ':${AWS::AccountId}:', 'mfa/${aws:username}'] ]                
             ] 
 
+  AssumeAWSAdminRolePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: AssumeAWSAdminRolePolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:  [
+                "sts:AssumeRole"
+            ]
+          Resource: !Join [ "", [ 'arn:aws:iam::', '*', ':role/AWSAdminRole'] ]
+          Condition:
+            BoolIfExists:
+                aws:MultiFactorAuthPresent: 'true'
+
+  AssumeNetworkAdminRolePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: AssumeNetworkAdminRolePolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:  [
+                "sts:AssumeRole"
+            ]
+          Resource: !Join [ "", [ 'arn:aws:iam::', '*', ':role/NetworkAdminRole'] ]
+          Condition:
+            BoolIfExists:
+                aws:MultiFactorAuthPresent: 'true'
+
   AssumeDeveloperRolePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -86,7 +116,6 @@ Resources:
             BoolIfExists:
                 aws:MultiFactorAuthPresent: 'true'
 
-
   AssumeReadOnlyRolePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -102,36 +131,3 @@ Resources:
           Condition:
             BoolIfExists:
                 aws:MultiFactorAuthPresent: 'true'
-  
-  AssumeNetworkAdminRolePolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: AssumeNetworkAdminRolePolicy
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Action:  [
-                "sts:AssumeRole"
-            ]
-          Resource: !Join [ "", [ 'arn:aws:iam::', '*', ':role/NetworkAdminRole'] ]
-          Condition:
-            BoolIfExists:
-                aws:MultiFactorAuthPresent: 'true'
-  
-  AssumeAWSAdminRolePolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: AssumeAWSAdminRolePolicy
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Action:  [
-                "sts:AssumeRole"
-            ]
-          Resource: !Join [ "", [ 'arn:aws:iam::', '*', ':role/AWSAdminRole'] ]
-          Condition:
-            BoolIfExists:
-                aws:MultiFactorAuthPresent: 'true'
-  
