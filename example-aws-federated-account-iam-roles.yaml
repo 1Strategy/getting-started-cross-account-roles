@@ -124,11 +124,11 @@ Resources:
           Condition:
             StringEqualsIfExists:
               ec2:InstanceType:
-              - t2.nano
-              - t2.micro
-              - t2.small
-              - t2.medium
-              - t2.large
+              - t3.nano
+              - t3.micro
+              - t3.small
+              - t3.medium
+              - t3.large
               # If restricting developers to a certain region isn't inline with what you're trying to accomplish,
               # you can remove the ec2:Region constraint below
               ec2:Region: !Ref OperatingRegion
