@@ -16,17 +16,17 @@ This template should be deployed into your identity or federation account (i.e. 
 
 This template creates 4 cross-account IAM Roles: ***ReadOnlyRole***, ***DeveloperRole***, ***NetworkAdminRole***, and ***AWSAdminRole***. Each IAM Role has policies that only allow for varying levels of IAM Permissions depending on job function. The roles titles are fairly self explanatory.
 
-* ***ReadOnlyRole***: Any user in the above groups can assume this IAM Role which will grant *Read Only* access into the current child or federated account.
-
 * ***AWSAdminRole***: Users assigned to the AWSAdminsGroup from above will have the ability to assume this IAM Role. This IAM Role grants full administrative access into whichever account it's deployed.
 
 * ***NetworkAdminRole***: Users assigned to the NetworkAdminGroup from above will have the ability to assume this IAM Role. This IAM Role grants access to VPC, Subnets, NACLs, Security Groups, and Route Tables into whichever account it's deployed.
 
-* ***DeveloperRole***: Users assigned to the DeveloperGroup from above will have the ability to assume this IAM Role. This IAM Role has two-tiers of access as determined by the *Environment* flag (condition) in the CloudFormation Parameters. In *Production* environments, the DeveloperRole will only have Read Only access. In **Development** or **Test** (sandbox) environments, the DeveloperRole has significantly more access. For example, RDS:\*, Lambda:\*, ELB:\*, etc etc. Please see the template for more details.
+* ***DeveloperRole***: Users assigned to the DeveloperGroup from above will have the ability to assume this IAM Role. This IAM Role grants access to all AWS services except Organizations, Account, and has restrictions on IAM.
 
-	Additionally, while the DeveloperRole will have access to deploy EC2 instances, they are limited to creating only smaller ec2 instances in a single given region (from a CloudFormation Parameter). This is to help limit costs and improve visibility.
+* ***ReadOnlyRole***: Any user in the above groups can assume this IAM Role which will grant *Read Only* access into the current child or federated account.
 
-This template must be deploy into EACH account that needs to be accessed via these cross-account roles, including the Identity Account (Roles can also be used within an account, not just cross-account. Yes I know it's confusing). Furthermore, any of the IAM Users in the above groups MUST have MFA enabled in order to assume any roles.
+	Additionally, while the DeveloperRole will have access to deploy EC2 instances, they are limited to creating only smaller EC2 instances in a single given region (from a CloudFormation Parameter). This is to help limit costs and improve visibility.
+
+This template must be deployed into EACH account that needs to be accessed via these cross-account roles, including the Identity Account (Roles can also be used within an account, not just cross-account. Yes I know it's confusing). Furthermore, any of the IAM Users in the above groups MUST have MFA enabled in order to assume any roles.
 
 For additional security, the assume role policies can be restricted to only assume roles in certain accounts. See below as an example:
 
