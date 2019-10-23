@@ -4,7 +4,7 @@ Description: Configure cross account roles
 Parameters:
   MasterAccountId:
     Type: String
-    Description: AWS Account Id of the identity/federation account.
+    Description: AWS Account Id of the master account.
     MaxLength: 12
     MinLength: 12
   OperatingRegion:
