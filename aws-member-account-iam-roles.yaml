@@ -7,11 +7,6 @@ Parameters:
     Description: AWS Account Id of the master account.
     MaxLength: 12
     MinLength: 12
-  OperatingRegion:
-    Type: String
-    Description: This limits the region into which developers can deploy ec2 instances
-    Default: "us-west-2"
-    AllowedValues: ["us-east-1", "us-east-2", "us-west-1", "us-west-2"]
   Environment:
     Type: String
     Description: Is the current AWS Account a Dev, Test, or Prod Environment
@@ -22,26 +17,7 @@ Conditions:
   NotProductionEnvironment: !Not [!Equals [!Ref Environment, "prod"]]
 
 Resources:
-  NetworkAdminRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: NetworkAdminRole
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              AWS:
-                - !Ref MasterAccountId
-            Action:
-              - sts:AssumeRole
-            Condition:
-              Bool:
-                aws:MultiFactorAuthPresent: 'true'
-      Path: /
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/job-function/NetworkAdministrator
-  
+
   AWSAdminRole:
     Type: AWS::IAM::Role
     Properties:
@@ -105,33 +81,23 @@ Resources:
         - arn:aws:iam::aws:policy/ReadOnlyAccess
         - arn:aws:iam::aws:policy/AWSServiceCatalogEndUserFullAccess
 
-  DeveloperEC2Policy:
+
+  DeveloperPolicy:
     Type: AWS::IAM::ManagedPolicy
     Condition: NotProductionEnvironment
     Properties:
-      ManagedPolicyName: DeveloperEC2Policy
+      ManagedPolicyName: DeveloperPolicy
       Roles:
       - !Ref DeveloperRole
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
-        - Sid: CreateSmallInstances
+        - Sid: CreateEC2Instances
           Effect: Allow
           Action: 
           - ec2:StartInstances
           - ec2:RunInstances
-          Resource: 'arn:aws:ec2:*:*:*'
-          Condition:
-            StringEqualsIfExists:
-              ec2:InstanceType:
-              - t3.nano
-              - t3.micro
-              - t3.small
-              - t3.medium
-              - t3.large
-              # If restricting developers to a certain region isn't inline with what you're trying to accomplish,
-              # you can remove the ec2:Region constraint below
-              ec2:Region: !Ref OperatingRegion
+          Resource: '*'
         - Sid: AllowsDevelopersToOnlyManageInstancesCreatedByThem
           Effect: Allow
           Action:
@@ -142,9 +108,9 @@ Resources:
           Resource: '*'
           # This condition assumes you've deployed this solution: https://s3.amazonaws.com/awsiammedia/public/sample/autotagec2resources/AutoTag.template
           # If that isn't the case you should comment out this conditional string
-          Condition:
-            StringEquals:
-              ec2:ResourceTag/PrincipalId: "${aws:userid}"
+          # Condition:
+          #   StringEquals:
+          #     ec2:ResourceTag/PrincipalId: "${aws:userid}"
         - Sid: EC2Permissions
           Effect: Allow
           Action:
