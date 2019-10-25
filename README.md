@@ -37,7 +37,7 @@ This template creates 3 cross-account IAM Roles: ***AWSAdminRole***, ***Develope
 
 * ***DeveloperRole***: Users assigned to the DeveloperGroup from above will have the ability to assume this IAM Role. This IAM Role has two-tiers of access as determined by the *Environment* flag (condition) in the CloudFormation Parameters. In *Production* environments, the DeveloperRole will only have Read Only access for all AWS services except Service Catalog. In **Development** or **Test** (sandbox) environments, the DeveloperRole has significantly more access. For example, RDS:\*, Lambda:\*, ELB:\*, etc etc. Please see the template for more details.
 
-* * ***ReadOnlyRole***: Any user in the above groups can assume this IAM Role which will grant *Read Only* access into the current child or federated account.
+* ***ReadOnlyRole***: Any user in the above groups can assume this IAM Role which will grant *Read Only* access into the current child or federated account.
 
 This template must be deploy into EACH account that needs to be accessed via these cross-account roles, including the Master Account (roles can also be used within an account, not just cross-account). Furthermore, any of the IAM Users in the above groups MUST have MFA enabled in order to assume any roles.
 

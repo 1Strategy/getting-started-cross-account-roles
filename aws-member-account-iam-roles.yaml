@@ -31,9 +31,9 @@ Resources:
                 - !Ref MasterAccountId
             Action:
               - sts:AssumeRole
-            Condition:
-              Bool:
-                aws:MultiFactorAuthPresent: 'true'
+            # Condition:
+            #   Bool:
+            #     aws:MultiFactorAuthPresent: 'true'
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
@@ -51,9 +51,9 @@ Resources:
                 - !Ref MasterAccountId
             Action:
               - sts:AssumeRole
-            Condition:
-              Bool:
-                aws:MultiFactorAuthPresent: 'true'
+            # Condition:
+            #   Bool:
+            #     aws:MultiFactorAuthPresent: 'true'
 
       Path: /
       ManagedPolicyArns:
@@ -72,9 +72,9 @@ Resources:
             - !Ref MasterAccountId
           Action:
           - sts:AssumeRole
-          Condition:
-            Bool:
-              aws:MultiFactorAuthPresent: 'true'
+          # Condition:
+          #   Bool:
+          #     aws:MultiFactorAuthPresent: 'true'
 
       Path: /
       ManagedPolicyArns:

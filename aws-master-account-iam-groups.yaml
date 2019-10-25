@@ -25,7 +25,7 @@ Resources:
   ReadOnlyGroup:
     Type: AWS::IAM::Group
     Properties:
-      GroupName: NetworkAdminGroup
+      GroupName: ReadOnlyGroup
       ManagedPolicyArns: [!Ref IAMSelfManagePolicy,
                           !Ref AssumeReadOnlyRolePolicy]
 
