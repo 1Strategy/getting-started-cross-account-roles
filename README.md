@@ -5,14 +5,23 @@ These example CloudFormation templates are to help you get started with secure c
 
 # Prerequisites
 
-As prerequisites to configuring and deploying this template, there must be at least two (we recommend 3) AWS accounts in an Organization. A pattern we see many customers follow is using their existing single account for Production, and then creating two more accounts to serve as the Organizational Root/ Master and the Development account. This scenario would entail the following steps:
+As prerequisites to configuring and deploying this template, there must be at least two (we recommend 3) AWS accounts in an Organization. A pattern we see many customers follow is using their existing single account for Production, and then creating two more accounts to serve as the Organizational Root/ Master and the Development account. This process is also simplified by [adding aliases](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#Creating%20and%20Deleting%20Aliases%) to all accounts. 
+This scenario would entail the following steps:
 
-	1. Create two new AWS accounts. We recommend using an email that is not tied to one particular person for the Root User. 
+	1. Create one new AWS account to serve as Master. We recommend using an email that is not tied to one particular person for the Root User
 	2. In the Master Account, create an AWS Organization
-	3. Invite the Production and Development accounts to join the Organization
-	4. Access the Production and Development accounts as an administrator, and accept the Organization Invitation
+	3. Invite the Production (existing) to join the Organization
+	4. Create an alias for the production account
+	5. Access the Production and Development accounts as an administrator, and accept the Organization Invitation
+Create a new account to serve as the organizational root/ Master account
+	6. Create [OrganizationAccountAccessRole](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html#orgs_manage_accounts_create-cross-account-role) in Production account
+	7. Return to the newly created Master account and create a Member account in the Organization to serve as the Development account
+	8. Verify email and create an alias for the new Development account
+	9. Proceed through the rest of this guide to establish cross-account role assumption
 
-![Diagram](example-diagram.png)
+See below for a Diagram of the 3-account setup:
+
+![Diagram](moving-to-multi-acct.png)
 
 ## ***example-aws-federation-account-iam-groups.yaml***
 
@@ -31,6 +40,8 @@ This template creates 3 cross-account IAM Roles: ***AWSAdminRole***, ***Develope
 * * ***ReadOnlyRole***: Any user in the above groups can assume this IAM Role which will grant *Read Only* access into the current child or federated account.
 
 This template must be deploy into EACH account that needs to be accessed via these cross-account roles, including the Master Account (roles can also be used within an account, not just cross-account). Furthermore, any of the IAM Users in the above groups MUST have MFA enabled in order to assume any roles.
+
+## Customization Example
 
 For additional security, the assume role policies can be restricted to only assume roles in certain accounts. See below as an example:
 
@@ -58,3 +69,11 @@ Statement:
 		    'arn:aws:iam::333333333333:role/DeveloperRole']
 ...
 ```
+
+# Using your newly created role-assumption
+
+1. Create IAM users in the new Master account
+2. Log in with your IAM user into Master account
+3. Enable MFA for your user
+4. Log out and log back in to Master, using MFA
+5. Assume role into prod account using its alias and the role name using the following link: https://signin.aws.amazon.com/switchrole?roleName=<IAM ROLE NAME TO BE ASSUMED>&account=<AWS ACCOUNT # or ALIAS>
