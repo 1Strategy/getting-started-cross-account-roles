@@ -11,13 +11,12 @@ This scenario would entail the following steps:
 	1. Create one new AWS account to serve as Master. We recommend using an email that is not tied to one particular person for the Root User
 	2. In the Master Account, create an AWS Organization
 	3. Invite the Production (existing) to join the Organization
-	4. Create an alias for the production account
-	5. Access the Production and Development accounts as an administrator, and accept the Organization Invitation
-Create a new account to serve as the organizational root/ Master account
+	4. Access the Production as an administrator, and accept the Organization Invitation
+	5. Create an alias for the Production account
 	6. Create [OrganizationAccountAccessRole](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html#orgs_manage_accounts_create-cross-account-role) in Production account
 	7. Return to the newly created Master account and create a Member account in the Organization to serve as the Development account
 	8. Verify email and create an alias for the new Development account
-	9. Proceed through the rest of this guide to establish cross-account role assumption
+	9.  Proceed through the rest of this guide to establish cross-account role assumption
 
 See below for a Diagram of the 3-account setup:
 
